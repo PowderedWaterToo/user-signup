@@ -6,7 +6,7 @@
 <form action="/welcome" method="post">
     <label>
         Username 
-        <input type="text" name="username" style="margin-left: 50px"/>
+        <input type="text" name="username" style="margin-left: 50px" {% if username %} value= '{{username}}' {% endif %}/>
     </label>
     {% if uerror %}
     <p class='error' style="display:inline">{{ uerror }}</p>
@@ -30,7 +30,7 @@
 <br>
     <label>
         Email (optional) 
-        <input type="text" name="email" style="margin-left: 10px"/>
+        <input type="text" name="email" style="margin-left: 10px" {% if email %} value= '{{email}}' {% endif %} />
     </label>
     {% if eerror %}
     <p class='error' style="display:inline">{{ eerror }}</p>
