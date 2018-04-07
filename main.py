@@ -5,61 +5,55 @@ app = Flask(__name__)
 
 app.config['DEBUG'] = True      # displays runtime errors in the browser, too
 
-# a list of movies that nobody should have to watch
-terrible_movies = [
-    "Gigli",
-    "Star Wars Episode 1: Attack of the Clones",
-    "Paul Blart: Mall Cop 2",
-    "Nine Lives",
-    "Starship Troopers"
-]
 
-def get_current_watchlist():
-    # returns user's current watchlist--hard coded for now
-    return ['Terminator', 'The Science of Sleep', 'Under The Skin']
-
-
-@app.route("/crossoff", methods=['POST'])
-def crossoff_movie():
-    crossed_off_movie = request.form['crossed-off-movie']
-
-    if crossed_off_movie not in get_current_watchlist():
-        # the user tried to cross off a movie that isn't in their list,
-        # so we redirect back to the front page and tell them what went wrong
-        error = "'{0}' is not in your Watchlist, so you can't cross it off!".format(crossed_off_movie)
-
-        # redirect to homepage, and include error as a query parameter in the URL
-        return redirect("/?error=" + error)
-
-    # if we didn't redirect by now, then all is well
-    return render_template('crossoff.html', crossed_off_movie=crossed_off_movie)
-
-@app.route("/add", methods=['POST'])
-def add_movie():
+@app.route("/welcome", methods=['POST'])
+def welcome_user():
     # look inside the request to figure out what the user typed
-    new_movie = request.form['new-movie']
+    username = request.form['username']
+    password = request.form['password']
+    vpassword = request.form['vpassword']
+    email = request.form['email']
+
+    uerror = ""
+    perror = ""
+    verror = ""
 
     # if the user typed nothing at all, redirect and tell them the error
-    if (not new_movie) or (new_movie.strip() == ""):
-        error = "Please specify the movie you want to add."
-        return redirect("/?error=" + error)
+    if (not username) or (username.strip() == ""):
+        uerror = "You must type a valid username."
 
-    # if the user wants to add a terrible movie, redirect and tell them the error
-    if new_movie in terrible_movies:
-        error = "Trust me, you don't want to add '{0}' to your Watchlist".format(new_movie)
-        return redirect("/?error=" + error)
+    if (not password) or (password.strip() == ""):
+        perror = "You must enter a password."
+
+    if (not vpassword) or (vpassword.strip() == ""):
+        verror = "You must verify your password."
+
+    if len(email) == 0:
+        eerror = ""
+    elif "@" not in email or "." not in email or len(email)<3 or len(email)>20 or " " in email:
+        eerror = "You must enter a valid email address between 3 and 20 characters with no spaces."
+
+    if len(uerror)>0 or len(perror)>0 or len(verror)>0 or len(eerror)>0:
+        return redirect("/?uerror=" + uerror + "&perror=" + perror + "&verror=" + verror + "&eerror=" + eerror)
+
 
     # 'escape' the user's input so that if they typed HTML, it doesn't mess up our site
-    new_movie_escaped = cgi.escape(new_movie, quote=True)
+    username_escaped = cgi.escape(username, quote=True)
 
     # TODO:
     # Create a template called add-confirmation.html inside your /templates directory
     # Use that template to render the confirmation message instead of this temporary message below
-    return render_template('add-confirmation.html', new_movie=new_movie)
+    return render_template('welcome.html', username=username)
+
 
 @app.route("/")
 def index():
-    encoded_error = request.args.get("error")
-    return render_template('home.html', error=encoded_error and cgi.escape(encoded_error, quote=True))
+    encoded_uerror = request.args.get("uerror")
+    encoded_perror = request.args.get("perror")
+    encoded_verror = request.args.get("verror")
+    encoded_eerror = request.args.get("eerror")
+
+    return render_template('home.html', uerror=encoded_uerror and cgi.escape(encoded_uerror, quote=True), perror=encoded_perror and cgi.escape(encoded_perror, quote=True), verror=encoded_verror and cgi.escape(encoded_verror, quote=True), eerror=encoded_eerror and cgi.escape(encoded_eerror, quote=True))
+
 
 app.run()

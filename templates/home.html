@@ -8,28 +8,38 @@
         Username 
         <input type="text" name="username" style="margin-left: 50px"/>
     </label>
-	<br>
+    {% if uerror %}
+    <p class='error' style="display:inline">{{ uerror }}</p>
+    {% endif %}
+<br>
     <label>
         Password 
         <input type="password" name="password" style="margin-left: 54px"/>
     </label>
+    {% if perror %}
+    <p class='error' style="display:inline">{{ perror }}</p>
+    {% endif %}
 	<br>
     <label>
         Verify Password 
         <input type="password" name="vpassword" style="margin-left: 10px"/>
     </label>
-	<br>
+    {% if verror %}
+    <p class='error' style="display:inline">{{ verror }}</p>
+    {% endif %}
+<br>
     <label>
         Email (optional) 
         <input type="text" name="email" style="margin-left: 10px"/>
     </label>
+    {% if eerror %}
+    <p class='error' style="display:inline">{{ eerror }}</p>
+    {% endif %}
 	<br>
     <input type="submit" value="Submit Query"/>
 </form>
 
-{% if error %}
-  <p class='error'>{{ error }}</p>
-{% endif %}
+
 
 
 {% endblock %}
